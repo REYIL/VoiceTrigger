@@ -1,0 +1,6 @@
+colorlog==6.10.1
+noisereduce>=3.0.0,<4.0.0
+numpy>=1.22.0,<2.0.0
+scipy>=1.10.0,<2.0.0
+sounddevice>=0.4.4,<0.6.0
+vosk>=0.3.45,<0.4.0
