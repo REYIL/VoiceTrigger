@@ -25,20 +25,31 @@ Realtime-распознаватель речи на базе **[Vosk](https://gi
 
 ## Установка
 
-**Через репозиторий**
-1. Склонируйте/скопируйте проект в папку.
+**Установка через репозиторий**
+
+1. Склонируйте или скопируйте проект в папку:
+
+   ```bash
+   git clone https://github.com/REYIL/VoiceTrigger.git
+   cd VoiceTrigger
+   ```
+
 2. Установите зависимости:
 
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-**Через pip**
+**Установка через pip**
+
 ```bash
 pip install VoiceTrigger
 ```
 
-> Также скачайте Vosk-модель (например, `model_small`) и укажите путь в `model_path`.
+**Дополнительно**
+
+* Скачайте Vosk-модель (например, `model_small`) с [официального сайта Vosk](https://alphacephei.com/vosk/models).
+* Укажите путь к модели в параметре `model_path` при использовании пакета.
 
 ---
 
