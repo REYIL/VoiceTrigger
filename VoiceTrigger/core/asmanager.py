@@ -31,14 +31,14 @@ class AudioStreamManager:
             # fallback: try to get buffer
             try:
                 data_bytes = indata.tobytes()
-            except Exception:
-                self.logger.debug("Failed to convert audio input to bytes.", exc_info=True)
+            except Exception as e:
+                self.logger.debug(f"Failed to convert audio input to bytes: {e}", exc_info=True)
                 return
         if self.callback:
             try:
                 self.callback(data_bytes, frames, time_info, status)
-            except Exception:
-                self.logger.exception("Error in user audio callback.")
+            except Exception as e:
+                self.logger.exception(f"Error in user audio callback: {e}")
 
     def start(self):
         with self._lock:
@@ -67,8 +67,8 @@ class AudioStreamManager:
             try:
                 self._stream.stop()
                 self._stream.close()
-            except Exception:
-                self.logger.exception("Error while stopping audio stream.")
+            except Exception as e:
+                self.logger.exception(f"Error while stopping audio stream: {e}")
             finally:
                 self._stream = None
                 self.logger.info("Audio stream stopped.")

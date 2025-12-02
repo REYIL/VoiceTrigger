@@ -95,8 +95,11 @@ class VoiceTrigger:
         self._silence_start_kw = time.time()
         self.latest_text = ""
 
-        # noise settings
-        self.noise_reduction = noise_reduction and _NOISEREDUCE_AVAILABLE
+        if (not _NOISEREDUCE_AVAILABLE or not _SCIPY_AVAILABLE) and noise_reduction:
+            raise Exception("To enable `noise_reduction=True`, `noisereduce` and `scipy` are missing. Please install them with `pip install noisereduce scipy`.")
+        elif noise_reduction or not noise_reduction:
+            self.noise_reduction = noise_reduction
+
         self.hp_cutoff = hp_cutoff
         self.noise_floor_db = -50.0
 
@@ -268,23 +271,23 @@ class VoiceTrigger:
 
     # --------- preprocessing ----------
     def _highpass_filter(self, data_float: np.ndarray):
-        if _SCIPY_AVAILABLE:
-            nyq = 0.5 * self.sample_rate
-            normal_cutoff = self.hp_cutoff / nyq
-            try:
-                b, a = butter(1, normal_cutoff, btype='high', analog=False)
-                return filtfilt(b, a, data_float)
-            except Exception:
-                self.log.debug("SciPy highpass failed; using fallback filter.", exc_info=True)
-        alpha = 0.995
-        y = np.zeros_like(data_float)
-        prev_x = 0.0
-        prev_y = 0.0
-        for i, x in enumerate(data_float):
-            y[i] = alpha * (prev_y + x - prev_x)
-            prev_x = x
-            prev_y = y[i]
-        return y
+        # if _SCIPY_AVAILABLE:
+        nyq = 0.5 * self.sample_rate
+        normal_cutoff = self.hp_cutoff / nyq
+        try:
+            b, a = butter(1, normal_cutoff, btype='high', analog=False)
+            return filtfilt(b, a, data_float)
+        except Exception:
+            self.log.debug("SciPy highpass failed; using fallback filter.", exc_info=True)
+        # alpha = 0.995
+        # y = np.zeros_like(data_float)
+        # prev_x = 0.0
+        # prev_y = 0.0
+        # for i, x in enumerate(data_float):
+        #     y[i] = alpha * (prev_y + x - prev_x)
+        #     prev_x = x
+        #     prev_y = y[i]
+        # return y
 
     def _simple_noise_gate_and_normalize(self, data_float: np.ndarray):
         if data_float.size == 0:
@@ -311,7 +314,7 @@ class VoiceTrigger:
             data_int16 = np.frombuffer(data_bytes, dtype=np.int16)
             data_float = data_int16.astype(np.float32) / 32768.0
             data_float = self._highpass_filter(data_float)
-            if self.noise_reduction and _NOISEREDUCE_AVAILABLE:
+            if self.noise_reduction:
                 try:
                     nr_out = nr.reduce_noise(y=data_float, sr=self.sample_rate, stationary=False)
                     data_float = nr_out.astype(np.float32)
@@ -375,7 +378,7 @@ class VoiceTrigger:
         try:
             if inspect.iscoroutinefunction(handler):
                 # schedule coroutine
-                asyncio.create_task(handler(arg))
+                _ = asyncio.create_task(handler(arg))
             else:
                 # run sync handler in executor to avoid blocking
                 loop = asyncio.get_running_loop()
@@ -417,7 +420,7 @@ class VoiceTrigger:
         for h in handlers:
             try:
                 if inspect.iscoroutinefunction(h):
-                    asyncio.create_task(h(silence_main))
+                    _ = asyncio.create_task(h(silence_main))
                 else:
                     loop = asyncio.get_running_loop()
                     await loop.run_in_executor(None, h, silence_main)
@@ -430,7 +433,7 @@ class VoiceTrigger:
         for h in handlers:
             try:
                 if inspect.iscoroutinefunction(h):
-                    asyncio.create_task(h(silence_kw))
+                    _ = asyncio.create_task(h(silence_kw))
                 else:
                     loop = asyncio.get_running_loop()
                     await loop.run_in_executor(None, h, silence_kw)

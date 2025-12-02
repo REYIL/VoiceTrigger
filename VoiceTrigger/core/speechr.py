@@ -35,8 +35,8 @@ class SpeechRecognizer:
         if self.model:
             try:
                 return vosk.KaldiRecognizer(self.model, self.sample_rate)
-            except Exception:
-                self.logger.exception("Failed to create KaldiRecognizer.")
+            except Exception as e:
+                self.logger.exception(f"Failed to create KaldiRecognizer: {e}")
                 return None
         return None
 
@@ -57,8 +57,8 @@ class SpeechRecognizer:
                 self.rec_kw.Reset()
             if self.rec_quick:
                 self.rec_quick.Reset()
-        except Exception:
-            self.logger.exception("Error while resetting recognizers.")
+        except Exception as e:
+            self.logger.exception(f"Error while resetting recognizers: {e}")
 
     # Helper accept/process methods: returns tuple(result_text, partial_text)
     def process_main(self, processed_bytes: bytes):
@@ -70,8 +70,8 @@ class SpeechRecognizer:
                 text = result.get("text", "")
             else:
                 partial = json.loads(self.rec_main.PartialResult()).get("partial", "")
-        except Exception:
-            self.logger.debug("Error in main recognizer processing.", exc_info=True)
+        except Exception as e:
+            self.logger.debug(f"Error in main recognizer processing: {e}", exc_info=True)
         return text, partial
 
     def process_kw(self, processed_bytes: bytes):
@@ -81,8 +81,8 @@ class SpeechRecognizer:
                 _ = json.loads(self.rec_kw.Result())
             partial = json.loads(self.rec_kw.PartialResult()).get("partial", "")
             return "", partial
-        except Exception:
-            self.logger.debug("Error in keyword recognizer processing.", exc_info=True)
+        except Exception as e:
+            self.logger.debug(f"Error in keyword recognizer processing: {e}", exc_info=True)
             return "", ""
 
     def process_quick(self, processed_bytes: bytes):
@@ -91,6 +91,6 @@ class SpeechRecognizer:
                 _ = json.loads(self.rec_quick.Result())
             partial = json.loads(self.rec_quick.PartialResult()).get("partial", "")
             return "", partial
-        except Exception:
-            self.logger.debug("Error in quick recognizer processing.", exc_info=True)
+        except Exception as e:
+            self.logger.debug(f"Error in quick recognizer processing: {e}", exc_info=True)
             return "", ""

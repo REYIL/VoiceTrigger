@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "VoiceTrigger"
+version = "1.0.0"
+description = "Realtime-распознаватель речи на базе Vosk: управление микрофоном, детекция уровня голоса (whisper / normal / shout), опциональное шумоподавление, декораторный API для обработки текста, ключевых слов и быстрых команд."
+readme = "README.md"
+requires-python = ">=3.8, <3.13"
+license = {text = "MIT"}
+authors = [{name="REYIL", email="azamatilbulov@gmail.com"}]
+
+dependencies = [
+    "colorlog>=6.10.1,<7.0.0",
+    "noisereduce>=3.0.0,<4.0.0",
+    "numpy>=1.22.0,<2.0.0",
+    "scipy>=1.10.0,<2.0.0",
+    "sounddevice>=0.4.4,<0.6.0",
+    "vosk>=0.3.45,<0.4.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["VoiceTrigger*"]

@@ -19,7 +19,8 @@ bot = VoiceTrigger(
     quick_words=["стоп", "назад", "вперед", "какая погода"],
     logger=ColorLogger(level="debug"),
     # calibration_path=CALIBRATION_PATH
-    rms_thresholds=rms_thresholds
+    rms_thresholds=rms_thresholds,
+    noise_reduction=False
 )
 
 

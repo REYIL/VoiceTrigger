@@ -25,11 +25,17 @@ Realtime-распознаватель речи на базе **[Vosk](https://gi
 
 ## Установка
 
+**Через репозиторий**
 1. Склонируйте/скопируйте проект в папку.
 2. Установите зависимости:
 
 ```bash
 pip install -r requirements.txt
+```
+
+**Через pip**
+```bash
+pip install VoiceTrigger
 ```
 
 > Также скачайте Vosk-модель (например, `model_small`) и укажите путь в `model_path`.

@@ -79,8 +79,8 @@ class VoiceLevelDetector:
             q = float(calib["quiet"]["db_mean"])
             n = float(calib["normal"]["db_mean"])
             l = float(calib["loud"]["db_mean"])
-        except Exception:
-            self.logger.debug("Incomplete calibration data; skipping threshold computation.")
+        except Exception as e:
+            self.logger.debug(f"Incomplete calibration data; skipping threshold computation: {e}")
             return
 
         if not (q <= n <= l):
@@ -101,7 +101,8 @@ class VoiceLevelDetector:
 
         self.silence_db = min(self.silence_db, q - 6.0)
 
-    def rms_db(self, data: np.ndarray):
+    @staticmethod
+    def rms_db(data: np.ndarray):
         rms = np.sqrt(np.mean(np.square(data)))
         db = 20 * np.log10(rms + 1e-6)
         return rms, db
@@ -114,7 +115,8 @@ class VoiceLevelDetector:
             low = mag[freqs < 1000].sum() + 1e-6
             high = mag[freqs >= 1000].sum() + 1e-6
             return float(high / low)
-        except Exception:
+        except Exception as e:
+            self.logger.error(e)
             return 1.0
 
     def _decide_by_hybrid(self, db: float, hf: float) -> str:
@@ -153,8 +155,8 @@ class VoiceLevelDetector:
             try:
                 arr = np.frombuffer(data_bytes, dtype=np.float32)
                 data = arr
-            except Exception:
-                self.logger.debug("Failed to interpret audio bytes for voice level calculation.", exc_info=True)
+            except Exception as e:
+                self.logger.debug(f"Failed to interpret audio bytes for voice level calculation: {e}", exc_info=True)
                 return
 
         self._blocks_since_compute += 1
@@ -165,8 +167,8 @@ class VoiceLevelDetector:
                 hf = self.hf_ratio(data)
                 level = self._decide_by_hybrid(db, hf)
                 self._last_computed_level = level
-            except Exception:
-                self.logger.exception("Error while computing voice level.")
+            except Exception as e:
+                self.logger.exception(f"Error while computing voice level: {e}")
                 level = self._last_computed_level
         else:
             level = self._last_computed_level
