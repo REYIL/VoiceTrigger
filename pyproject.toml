@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "VoiceTrigger"
-version = "1.0.0"
+version = "1.0.2"
 description = "Realtime-распознаватель речи на базе Vosk: управление микрофоном, детекция уровня голоса (whisper / normal / shout), опциональное шумоподавление, декораторный API для обработки текста, ключевых слов и быстрых команд."
 readme = "README.md"
 requires-python = ">=3.8, <3.13"
