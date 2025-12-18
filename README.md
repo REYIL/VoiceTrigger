@@ -1,5 +1,6 @@
 ![Python Versions (3.8, 3.9, 3.10, 3.11, 3.12)](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10%20|%203.11%20|%203.12-blue)
 ![Vosk](https://img.shields.io/badge/Vosk-blue)
+![License](https://img.shields.io/badge/license-MIT-orange.svg)
 
 # VoiceTrigger
 
